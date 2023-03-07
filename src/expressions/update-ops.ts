@@ -1,52 +1,49 @@
-import type { UpdateInput, UpdateOutput } from '../dynoexpr';
-import { getUpdateExpression } from './update';
+import type { IUpdateInput, IUpdateOutput } from "src/dynoexpr.d";
 
-type GetUpdateExpressionFn = (params?: UpdateInput) => UpdateOutput;
+import { getUpdateExpression } from "./update";
 
-export const getUpdateSetExpression: GetUpdateExpressionFn = (params = {}) => {
-	const { UpdateSet, ...restOfParams } = params;
+export function getUpdateSetExpression(params?: IUpdateInput) {
+	const { UpdateSet, ...restOfParams } = params || {};
+
 	return getUpdateExpression({
 		...restOfParams,
 		Update: UpdateSet,
-		UpdateAction: 'SET',
+		UpdateAction: "SET",
 	});
-};
+}
 
-export const getUpdateRemoveExpression: GetUpdateExpressionFn = (
-	params = {}
-) => {
-	const { UpdateRemove, ...restOfParams } = params;
+export function getUpdateRemoveExpression(params?: IUpdateInput) {
+	const { UpdateRemove, ...restOfParams } = params || {};
+
 	return getUpdateExpression({
 		...restOfParams,
 		Update: UpdateRemove,
-		UpdateAction: 'REMOVE',
+		UpdateAction: "REMOVE",
 	});
-};
+}
 
-export const getUpdateAddExpression: GetUpdateExpressionFn = (params = {}) => {
-	const { UpdateAdd, ...restOfParams } = params;
+export function getUpdateAddExpression(params?: IUpdateInput) {
+	const { UpdateAdd, ...restOfParams } = params || {};
+
 	return getUpdateExpression({
 		...restOfParams,
 		Update: UpdateAdd,
-		UpdateAction: 'ADD',
+		UpdateAction: "ADD",
 	});
-};
+}
 
-export const getUpdateDeleteExpression: GetUpdateExpressionFn = (
-	params = {}
-) => {
-	const { UpdateDelete, ...restOfParams } = params;
+export function getUpdateDeleteExpression(params?: IUpdateInput) {
+	const { UpdateDelete, ...restOfParams } = params || {};
+
 	return getUpdateExpression({
 		...restOfParams,
 		Update: UpdateDelete,
-		UpdateAction: 'DELETE',
+		UpdateAction: "DELETE",
 	});
-};
+}
 
-export const getUpdateOperationsExpression: GetUpdateExpressionFn = (
-	params = {}
-) => {
-	const updateExpressions: string[] = [];
+export function getUpdateOperationsExpression(params: IUpdateInput = {}) {
+	const updateExpressions: unknown[] = [];
 	const outputParams = [
 		getUpdateSetExpression,
 		getUpdateRemoveExpression,
@@ -54,18 +51,18 @@ export const getUpdateOperationsExpression: GetUpdateExpressionFn = (
 		getUpdateDeleteExpression,
 	].reduce((acc, getExpressionFn) => {
 		const expr = getExpressionFn(acc);
-		const { UpdateExpression = '' } = expr;
+		const { UpdateExpression = "" } = expr;
 		updateExpressions.push(UpdateExpression);
 		return expr;
-	}, params as UpdateOutput);
+	}, params as IUpdateOutput);
 
 	const aggUpdateExpression = updateExpressions
 		.filter(Boolean)
 		.filter((e, i, a) => a.indexOf(e) === i)
-		.join(' ');
+		.join(" ");
 	if (aggUpdateExpression) {
 		outputParams.UpdateExpression = aggUpdateExpression;
 	}
 
 	return outputParams;
-};
+}

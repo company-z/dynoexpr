@@ -14,119 +14,54 @@
 		"documentclient"
 	],
 	"files": [
-		"dist/index.mjs",
 		"dist/index.cjs",
+		"dist/index.mjs",
 		"dist/index.d.ts",
-		"dist/dynoexpr.d.ts",
-		"cjs/index.js"
+		"dist/dynoexpr.d.ts"
 	],
 	"engines": {
 		"node": ">=14"
 	},
-	"main": "./cjs/index.js",
+	"main": "./dist/index.cjs",
 	"module": "./dist/index.mjs",
 	"exports": {
 		".": [
 			{
 				"import": "./dist/index.mjs",
-				"require": "./cjs/index.js",
+				"require": "./dist/index.cjs",
 				"default": "./dist/index.mjs"
 			},
 			"./dist/index.mjs"
 		]
 	},
 	"types": "dist/index.d.ts",
-	"dependencies": {},
-	"devDependencies": {
-		"@types/jest": "28.1.4",
-		"@types/node": "18.0.0",
-		"@typescript-eslint/eslint-plugin": "5.30.3",
-		"@typescript-eslint/parser": "5.30.3",
-		"aws-sdk": "^2.2.0",
-		"esbuild": "0.14.48",
-		"eslint": "8.19.0",
-		"eslint-config-airbnb-base": "15.0.0",
-		"eslint-config-airbnb-typescript": "17.0.0",
-		"eslint-config-prettier": "8.5.0",
-		"eslint-plugin-import": "2.26.0",
-		"eslint-plugin-jest": "26.5.3",
-		"jest": "28.1.2",
-		"nyc": "15.1.0",
-		"prettier": "2.7.1",
-		"ts-jest": "28.0.5",
-		"typescript": "4.7.4"
-	},
-	"peerDependencies": {
-		"aws-sdk": "^2.2.0"
-	},
 	"scripts": {
-		"build": "bash sh/build.sh",
-		"dev": "bash sh/watch.sh",
+		"build": "tsx sh/build.ts",
+		"coverage": "tsx sh/coverage.ts",
+		"dev": "tsx sh/dev.ts",
+		"format": "prettier --write src sh",
 		"lint:ts": "tsc --noEmit",
 		"lint": "eslint --ext ts src",
-		"test:ci:coverage": "bash sh/coverage.sh",
-		"test:ci": "jest --ci",
-		"test": "jest --watch"
+		"test:ci": "vitest run",
+		"test": "vitest --watch"
 	},
-	"eslintConfig": {
-		"extends": [
-			"airbnb-base",
-			"airbnb-typescript/base",
-			"prettier",
-			"plugin:@typescript-eslint/recommended",
-			"plugin:import/typescript",
-			"plugin:jest/all"
-		],
-		"parser": "@typescript-eslint/parser",
-		"plugins": [
-			"@typescript-eslint",
-			"jest"
-		],
-		"parserOptions": {
-			"ecmaVersion": 9,
-			"project": "./tsconfig.json"
-		},
-		"env": {
-			"node": true,
-			"jest": true
-		},
-		"rules": {
-			"@typescript-eslint/comma-dangle": "off",
-			"import/extensions": "off",
-			"import/no-unresolved": "off",
-			"import/prefer-default-export": "off",
-			"jest/no-deprecated-functions": "off",
-			"jest/no-hooks": "off",
-			"jest/prefer-expect-assertions": "off"
-		},
-		"overrides": [
-			{
-				"files": [
-					"**/*.ts"
-				],
-				"rules": {
-					"no-undef": "off"
-				}
-			}
-		]
-	},
-	"prettier": {
-		"singleQuote": true,
-		"trailingComma": "es5",
-		"printWidth": 80,
-		"useTabs": true
-	},
-	"jest": {
-		"roots": [
-			"<rootDir>/src"
-		],
-		"transform": {
-			"^.+\\.(t|j)sx?$": "ts-jest"
-		},
-		"testEnvironment": "node"
-	},
-	"volta": {
-		"node": "18.4.0",
-		"yarn": "1.22.19"
+	"devDependencies": {
+		"@types/node": "18.14.6",
+		"@typescript-eslint/eslint-plugin": "5.54.0",
+		"@typescript-eslint/parser": "5.54.0",
+		"@vitest/coverage-c8": "0.29.2",
+		"aws-sdk": "^2.2.0",
+		"esbuild": "0.17.11",
+		"eslint": "8.35.0",
+		"eslint-config-airbnb-base": "15.0.0",
+		"eslint-config-airbnb-typescript": "17.0.0",
+		"eslint-config-prettier": "8.6.0",
+		"eslint-plugin-import": "2.27.5",
+		"nyc": "15.1.0",
+		"prettier": "2.8.4",
+		"tsx": "3.12.3",
+		"typescript": "4.9.5",
+		"vitest": "0.29.2",
+		"zx": "7.2.0"
 	}
 }

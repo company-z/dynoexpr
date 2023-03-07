@@ -1,28 +1,51 @@
 import type {
-	DynoexprInput,
-	BatchRequestInput,
-	TransactRequestInput,
-	DynoexprOutput,
-} from './dynoexpr';
+	IBatchRequestInput,
+	IDynoexprInput,
+	IDynoexprOutput,
+	ITransactRequestInput,
+} from "src/dynoexpr.d";
 
-import { getSingleTableExpressions } from './operations/single';
-import { isBatchRequest, getBatchExpressions } from './operations/batch';
+import { getBatchExpressions, isBatchRequest } from "./operations/batch";
+import { getSingleTableExpressions } from "./operations/single";
 import {
-	isTransactRequest,
 	getTransactExpressions,
-} from './operations/transact';
+	isTransactRequest,
+} from "./operations/transact";
+import { AwsSdkDocumentClient } from "./document-client";
 
-type DynoexprParams = DynoexprInput | BatchRequestInput | TransactRequestInput;
+interface IDynoexprArgs
+	extends IDynoexprInput,
+		IBatchRequestInput,
+		ITransactRequestInput {
+	DocumentClient: unknown;
+}
 
-function dynoexpr<T = DynoexprOutput>(params: DynoexprParams): T {
-	if (isBatchRequest(params)) {
-		return getBatchExpressions(params) as DynoexprOutput as T;
+function cleanOutput<T>(output: unknown) {
+	const { DocumentClient, ...restOfOutput } = (output || {}) as {
+		[key: string]: unknown;
+	};
+
+	return restOfOutput as T;
+}
+
+function dynoexpr<T = IDynoexprOutput>(args: Partial<IDynoexprArgs>): T {
+	if (args.DocumentClient) {
+		AwsSdkDocumentClient.setDocumentClient(args.DocumentClient);
 	}
-	if (isTransactRequest(params)) {
-		return getTransactExpressions(params) as DynoexprOutput as T;
+
+	let returns: unknown;
+
+	if (isBatchRequest(args)) {
+		returns = getBatchExpressions(args) as IDynoexprOutput;
 	}
 
-	return getSingleTableExpressions(params) as T;
+	if (isTransactRequest(args)) {
+		returns = getTransactExpressions(args) as IDynoexprOutput;
+	}
+
+	returns = getSingleTableExpressions(args);
+
+	return cleanOutput<T>(returns);
 }
 
 export default dynoexpr;
